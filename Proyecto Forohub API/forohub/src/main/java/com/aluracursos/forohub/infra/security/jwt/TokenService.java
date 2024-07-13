@@ -18,14 +18,14 @@ import java.util.Date;
 @Service
 public class TokenService {
 
-    @Value("${forohub.security.secret}")
+    @Value("${spring.security.jwt.secret}")
     private String secretAPI;
 
     public String generarToken(Usuario usuario){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secretAPI);
             return JWT.create()
-                    .withIssuer("forhub")
+                    .withIssuer("forohub")
                     .withSubject(usuario.getEmail())
                     .withClaim("id", usuario.getId())
                     .withExpiresAt(generarFechaDeExpiracion())

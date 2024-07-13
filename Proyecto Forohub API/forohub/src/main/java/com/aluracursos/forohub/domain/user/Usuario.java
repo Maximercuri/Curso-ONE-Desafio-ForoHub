@@ -30,6 +30,15 @@ public class Usuario implements UserDetails {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Topico> topicos;
 
+    @Builder
+    public Usuario(Long id, String email, String nombreDeUsuario, String clave, List<Topico> topicos) {
+        this.id = id;
+        this.email = email;
+        this.nombreUsuario = nombreDeUsuario;
+        this.clave = clave;
+        this.topicos = topicos;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
@@ -42,7 +51,7 @@ public class Usuario implements UserDetails {
 
     @Override
     public String getUsername() {
-        return nombreUsuario;
+        return email;
     }
 
     @Override
