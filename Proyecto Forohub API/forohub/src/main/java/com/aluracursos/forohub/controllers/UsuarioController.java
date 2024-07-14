@@ -36,7 +36,6 @@ public class UsuarioController {
 
     @PostMapping("/register")
     public ResponseEntity<ObtenerUsuarioDTO> registrarUsuario(@RequestBody @Valid CrearUsuarioDTO usuarioCrear) {
-        System.out.println("Se ejecutó hasta acá");
         var usuariocreado = service.crearUsuario(usuarioCrear);
         URI URL = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -46,7 +45,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JWTtokenDatos> AutentificarUsuario(@RequestBody @Valid ValidarUsuarioDTO usuarioValidar){
+    public ResponseEntity<JWTtokenDatos> autentificarUsuario(@RequestBody @Valid ValidarUsuarioDTO usuarioValidar){
 
         Authentication authToken = new UsernamePasswordAuthenticationToken(usuarioValidar.email(), usuarioValidar.clave());
         var usuarioAutenticado = authenticationManager.authenticate(authToken);

@@ -6,6 +6,7 @@ import com.aluracursos.forohub.domain.user.CrearUsuarioDTO;
 import com.aluracursos.forohub.domain.user.ObtenerUsuarioDTO;
 import com.aluracursos.forohub.domain.user.Usuario;
 import com.aluracursos.forohub.domain.user.UsuarioRepository;
+import com.aluracursos.forohub.infra.errors.ExcepcionDeValidacionEnCreacion;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,7 +33,7 @@ public class UsuarioService {
         var usuarioExistente = repository.existsByEmail(usuarioDTO.email());
 
         if (usuarioExistente) {
-            throw new ValidationException("Este Email Ya tiene una Cuenta Registrada");
+            throw new ExcepcionDeValidacionEnCreacion("Este Email Ya tiene una Cuenta Registrada");
         }
 
         var claveCodificada = passwordEncoder.encode(usuarioDTO.clave());

@@ -31,13 +31,13 @@ public class TokenService {
                     .withExpiresAt(generarFechaDeExpiracion())
                     .sign(algorithm);
         } catch (JWTCreationException exception){
-            throw new RuntimeException("Error al crear el Token JWT", exception);
+            throw new JWTCreationException("Error al crear el Token JWT: ", exception);
         }
     }
 
     public String getSubject(String token){
         if (token == null){
-            throw new RuntimeException("Token Vacío No Valido");
+            throw new IllegalArgumentException("Token Vacío No Valido");
         }
         DecodedJWT verifier = null;
         try {
@@ -48,7 +48,7 @@ public class TokenService {
                     .verify(token);
             verifier.getSubject();
         } catch (JWTVerificationException exception){
-            throw new RuntimeException("Error al verificar el token JWT", exception);
+            throw new JWTVerificationException("Error al verificar el token JWT: ", exception);
         }
         if(verifier.getSubject() == null){
             throw new ValidationException("Token Invalidado Por Verificación");

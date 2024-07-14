@@ -3,9 +3,10 @@ spring:
     name: forohub
 
   datasource:
-    url: jdbc:postgresql://${DB_HOST}/forohub
+    url: jdbc:postgresql://${DB_HOST}:5432/forohub
     username: ${DB_USER}
     password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
 
   flyway:
     enabled: true
@@ -22,3 +23,8 @@ spring:
   security:
     jwt:
       secret: ${JWT_SECRET}
+
+server:
+  port: 8080
+  error:
+    include-stacktrace: never
