@@ -63,7 +63,14 @@ public class TopicoService {
     }
 
     public void borrarTopico(Long id) {
+
+
         var topico = repository.getReferenceById(id);
+
+        if (topico.getId() == null || topico.getFechaCreacion() == null) {
+            throw new ValidationException("No Existe Ningun Topico con ese id. POr Favor Ingrese Otro");
+        }
+
         repository.delete(topico);
     }
 

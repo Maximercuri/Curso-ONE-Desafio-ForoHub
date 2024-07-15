@@ -1,14 +1,14 @@
 package com.aluracursos.forohub.controllers;
 
-import com.aluracursos.forohub.domain.user.CrearUsuarioDTO;
-import com.aluracursos.forohub.domain.user.ObtenerUsuarioDTO;
-import com.aluracursos.forohub.domain.user.Usuario;
-import com.aluracursos.forohub.domain.user.ValidarUsuarioDTO;
+import com.aluracursos.forohub.domain.user.*;
 import com.aluracursos.forohub.infra.security.jwt.JWTtokenDatos;
 import com.aluracursos.forohub.infra.security.jwt.TokenService;
 import com.aluracursos.forohub.service.UsuarioService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,7 +42,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JWTtokenDatos> autentificarUsuario(@RequestBody @Valid ValidarUsuarioDTO usuarioValidar){
+    public ResponseEntity<JWTtokenDatos> autentificarUsuario(@RequestBody @Valid ValidarUsuarioDTO usuarioValidar) {
 
         Authentication authToken = new UsernamePasswordAuthenticationToken(usuarioValidar.email(), usuarioValidar.clave());
         var usuarioAutenticado = authenticationManager.authenticate(authToken);
@@ -52,4 +52,21 @@ public class UsuarioController {
 
     }
 
+    @GetMapping()
+    public ResponseEntity<Page<ObtenerUsuariosCreados>> obtenerUsuarios(@PageableDefault(size = 5) Pageable pageable) {
+
+        Page<ObtenerUsuariosCreados> usuarios = service.obtenerTodosLosUsuario(pageable);
+
+        return ResponseEntity.ok(usuarios);
+
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ObtenerUsuarioDTO> obtenerUsuario(@PathVariable Long id) {
+
+        ObtenerUsuarioDTO usuario = service.obtenerUsuario(id);
+
+        return ResponseEntity.ok(usuario);
+
+    }
 }

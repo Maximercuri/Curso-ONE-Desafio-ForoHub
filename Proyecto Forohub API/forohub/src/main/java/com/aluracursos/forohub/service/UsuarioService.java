@@ -2,13 +2,12 @@ package com.aluracursos.forohub.service;
 
 import com.aluracursos.forohub.domain.topico.ObtenerTopicoDTO;
 import com.aluracursos.forohub.domain.topico.ObtenerTopicoResumidoDTO;
-import com.aluracursos.forohub.domain.user.CrearUsuarioDTO;
-import com.aluracursos.forohub.domain.user.ObtenerUsuarioDTO;
-import com.aluracursos.forohub.domain.user.Usuario;
-import com.aluracursos.forohub.domain.user.UsuarioRepository;
+import com.aluracursos.forohub.domain.user.*;
 import com.aluracursos.forohub.infra.errors.ExcepcionDeValidacionEnCreacion;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +18,11 @@ import java.util.stream.Collectors;
 @Service
 public class UsuarioService {
 
-    private final UsuarioRepository repository;
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private UsuarioRepository repository;
 
     @Autowired
-    public UsuarioService(UsuarioRepository repository, PasswordEncoder passwordEncoder) {
-        this.repository = repository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    private PasswordEncoder passwordEncoder;
 
     public ObtenerUsuarioDTO crearUsuario(CrearUsuarioDTO usuarioDTO) {
 
@@ -47,12 +43,24 @@ public class UsuarioService {
 
         repository.save(usuario);
 
-        var topicos = usuario.getTopicos().stream()
-                .map(ObtenerTopicoResumidoDTO::new)
-                .collect(Collectors.toList());
-
-        return new ObtenerUsuarioDTO(usuario.getId(), usuario.getNombreUsuario(), usuario.getEmail(), topicos);
+        return new ObtenerUsuarioDTO(usuario);
     }
 
+
+    public Page<ObtenerUsuariosCreados> obtenerTodosLosUsuario(Pageable pageable) {
+        return repository.findAll(pageable)
+                .map(ObtenerUsuariosCreados::new);
+    }
+
+    public ObtenerUsuarioDTO obtenerUsuario(Long id) {
+
+        var usuario = repository.findById(id);
+
+        if ((usuario.isEmpty())) {
+            throw new ValidationException("No se ha Encontrado Ningún Usuario con ese id. Por Favor Ingrese Otro");
+        }
+
+        return new ObtenerUsuarioDTO(usuario.get());
+    }
 
 }
