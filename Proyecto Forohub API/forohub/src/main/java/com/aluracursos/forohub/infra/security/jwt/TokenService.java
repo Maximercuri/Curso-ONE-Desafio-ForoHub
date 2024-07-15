@@ -1,9 +1,11 @@
 package com.aluracursos.forohub.infra.security.jwt;
 
 import com.aluracursos.forohub.domain.user.Usuario;
+import com.aluracursos.forohub.infra.errors.JWTException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.validation.ValidationException;
@@ -35,7 +37,7 @@ public class TokenService {
         }
     }
 
-    public String getSubject(String token){
+    public String getSubject(String token) throws JWTException{
         if (token == null){
             throw new IllegalArgumentException("Token Vacío No Valido");
         }
@@ -47,11 +49,14 @@ public class TokenService {
                     .build()
                     .verify(token);
             verifier.getSubject();
-        } catch (JWTVerificationException exception){
-            throw new JWTVerificationException("Error al verificar el token JWT: ", exception);
+        } catch (JWTDecodeException exception) {
+            throw new JWTException("Formato de Token Inesperado. Por favor ingrese uno valido", exception.getCause());
+        } catch (JWTVerificationException exception) {
+            throw new JWTException("Error al verificar el token JWT", exception.getCause());
         }
+
         if(verifier.getSubject() == null){
-            throw new ValidationException("Token Invalidado Por Verificación");
+            throw new JWTException("Token Invalidado Por Verificación");
         }
         return verifier.getSubject();
     }
@@ -66,7 +71,7 @@ public class TokenService {
                     .verify(token);
             verificador = verifier.getExpiresAt().after(new Date());
         } catch (JWTVerificationException exception) {
-            throw new RuntimeException("Error al verificar durabilidad del token JWT", exception);
+            throw new JWTException("Error al verificar durabilidad del token JWT");
         }
         if (!verificador) {
             throw new ValidationException("Token Vencido");
@@ -75,7 +80,7 @@ public class TokenService {
     }
 
     private Instant generarFechaDeExpiracion() {
-        return LocalDateTime.now().plusHours(3).toInstant(ZoneOffset.UTC);
+        return LocalDateTime.now().plusHours(3).toInstant(ZoneOffset.of("-05:00"));
     }
 
 
