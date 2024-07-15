@@ -29,4 +29,19 @@ public class Topico {
     @ManyToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
+
+    public void actualizarDatos(ModificacionTopicoDTO topicoDTO) {
+
+        if (topicoDTO.mensaje() != null && !topicoDTO.mensaje().isEmpty()){
+            this.mensaje = topicoDTO.mensaje();
+        }
+
+        if (topicoDTO.titulo() != null && !topicoDTO.titulo().isEmpty()) {
+            this.titulo = topicoDTO.titulo();
+        }
+
+
+
+    }
+
 }

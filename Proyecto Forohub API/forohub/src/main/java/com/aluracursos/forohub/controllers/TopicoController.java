@@ -1,9 +1,11 @@
 package com.aluracursos.forohub.controllers;
 
 import com.aluracursos.forohub.domain.topico.CrearTopicoDTO;
+import com.aluracursos.forohub.domain.topico.ModificacionTopicoDTO;
 import com.aluracursos.forohub.domain.topico.ObtenerTopicoDTO;
 import com.aluracursos.forohub.domain.topico.ObtenerTopicoResumidoDTO;
 import com.aluracursos.forohub.service.TopicoService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,7 +41,7 @@ public class TopicoController {
 
     }
 
-    @GetMapping("/${id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ObtenerTopicoDTO> obtenerTopico(@PathVariable Long id) {
 
         ObtenerTopicoDTO topico = topicoService.obtenerTopico(id);
@@ -48,11 +50,24 @@ public class TopicoController {
 
     }
 
-//    @DeleteMapping("/${id}")
-//    public ResponseEntity borrarTopico(@PathVariable Long id) {
-//
-//
-//
-//    }
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity borrarTopico(@PathVariable Long id) {
+
+        topicoService.borrarTopico(id);
+
+        return ResponseEntity.accepted().build();
+
+    }
+
+    @PutMapping("/{id}")
+    @Transactional
+    public ResponseEntity<ObtenerTopicoDTO> modificarTopico(@RequestBody @Valid ModificacionTopicoDTO topicoModificado, @PathVariable Long id) {
+
+        ObtenerTopicoDTO topicoFinal = topicoService.modificarTopico(topicoModificado, id);
+
+        return ResponseEntity.ok(topicoFinal);
+
+    }
 
 }

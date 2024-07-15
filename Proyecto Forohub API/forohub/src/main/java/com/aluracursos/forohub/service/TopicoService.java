@@ -61,4 +61,25 @@ public class TopicoService {
         return new ObtenerTopicoDTO(topico.get());
 
     }
+
+    public void borrarTopico(Long id) {
+        var topico = repository.getReferenceById(id);
+        repository.delete(topico);
+    }
+
+    public ObtenerTopicoDTO modificarTopico(ModificacionTopicoDTO topicoModificado, Long id) {
+
+        var topico = repository.findById(id);
+
+        if (topico.isEmpty()) {
+            throw new ValidationException("No Se ha Encontrado Ningún Topico con ese Id");
+        }
+
+        topico.get().actualizarDatos(topicoModificado);
+
+        var topicoFinal = repository.findById(id);
+
+        return new ObtenerTopicoDTO(topicoFinal.get());
+
+    }
 }
